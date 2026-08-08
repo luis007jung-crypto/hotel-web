@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">Check-Out</h2>
+
+        <p class="text-muted mb-0">
+            Finaliza una estancia y libera la habitación.
+        </p>
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover align-middle mb-0">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>Huésped</th>
+                        <th>Habitación</th>
+                        <th>Tipo</th>
+                        <th>Fecha de ingreso</th>
+                        <th>Precio</th>
+                        <th>Fecha de salida</th>
+                        <th class="text-center">
+                            Acción
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for reserva in reservas %}
+
+                        <tr>
+                            <td>
+                                {{ reserva.huesped.nombre }}
+                            </td>
+
+                            <td>
+                                Habitación {{ reserva.habitacion.numero }}
+                            </td>
+
+                            <td>
+                                {{ reserva.habitacion.tipo }}
+                            </td>
+
+                            <td>
+                                {{ reserva.fecha_ingreso.strftime("%d/%m/%Y") }}
+                            </td>
+
+                            <td>
+                                Q{{ "%.2f"|format(reserva.habitacion.precio) }}
+                            </td>
+
+                            <td>
+                                <form
+                                    action="{{ url_for(
+                                        'reservas.realizar_checkout',
+                                        id=reserva.id
+                                    ) }}"
+                                    method="POST"
+                                    class="d-flex gap-2"
+                                    onsubmit="return confirm(
+                                        '¿Deseas realizar el Check-Out?'
+                                    );"
+                                >
+
+                                    <input
+                                        type="date"
+                                        class="form-control form-control-sm"
+                                        name="fecha_salida"
+                                        value="{{ fecha_actual }}"
+                                        min="{{ reserva.fecha_ingreso.isoformat() }}"
+                                        required
+                                    >
+
+                            </td>
+
+                            <td class="text-center">
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger btn-sm"
+                                    >
+                                        Realizar Check-Out
+                                    </button>
+
+                                </form>
+
+                            </td>
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+                            <td
+                                colspan="7"
+                                class="text-center py-4"
+                            >
+                                No existen reservas activas.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">Editar Huésped</h2>
+
+        <p class="text-muted mb-0">
+            Modifica los datos personales del huésped.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('huespedes.listar_huespedes') }}"
+        class="btn btn-secondary"
+    >
+        Regresar
+    </a>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <form method="POST">
+
+            <div class="mb-3">
+                <label for="nombre" class="form-label">
+                    Nombre completo
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    id="nombre"
+                    name="nombre"
+                    value="{{ huesped.nombre }}"
+                    maxlength="100"
+                    required
+                >
+            </div>
+
+            <div class="mb-3">
+                <label for="dpi" class="form-label">
+                    DPI
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    id="dpi"
+                    name="dpi"
+                    value="{{ huesped.dpi }}"
+                    minlength="13"
+                    maxlength="13"
+                    inputmode="numeric"
+                    required
+                >
+            </div>
+
+            <div class="mb-3">
+                <label for="telefono" class="form-label">
+                    Teléfono
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    id="telefono"
+                    name="telefono"
+                    value="{{ huesped.telefono }}"
+                    minlength="8"
+                    maxlength="8"
+                    inputmode="numeric"
+                    required
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-success"
+            >
+                Guardar cambios
+            </button>
+
+            <a
+                href="{{ url_for('huespedes.listar_huespedes') }}"
+                class="btn btn-secondary"
+            >
+                Cancelar
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

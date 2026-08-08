@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-4 no-imprimir">
+
+    <div>
+        <h2 class="mb-1">
+            Factura de hospedaje
+        </h2>
+
+        <p class="text-muted mb-0">
+            Resumen del Check-Out realizado.
+        </p>
+    </div>
+
+    <div class="d-flex gap-2">
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            onclick="window.print();"
+        >
+            <i class="bi bi-printer"></i>
+            Imprimir
+        </button>
+
+        <a
+            href="{{ url_for('reservas.checkout') }}"
+            class="btn btn-outline-secondary"
+        >
+            Regresar
+        </a>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm factura">
+
+    <div class="card-body p-5">
+
+        <div class="text-center mb-5">
+
+            <div class="logo-factura">
+                <i class="bi bi-buildings-fill"></i>
+            </div>
+
+            <h2 class="mb-1">
+                Hotel El Descanso
+            </h2>
+
+            <p class="text-muted mb-0">
+                Factura de hospedaje
+            </p>
+
+        </div>
+
+        <div class="row g-4 mb-4">
+
+            <div class="col-md-6">
+
+                <h5>Datos del huésped</h5>
+
+                <p class="mb-1">
+                    <strong>Nombre:</strong>
+                    {{ reserva.huesped.nombre }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>DPI:</strong>
+                    {{ reserva.huesped.dpi }}
+                </p>
+
+                <p class="mb-0">
+                    <strong>Teléfono:</strong>
+                    {{ reserva.huesped.telefono }}
+                </p>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <h5>Datos de la estancia</h5>
+
+                <p class="mb-1">
+                    <strong>Habitación:</strong>
+                    {{ reserva.habitacion.numero }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Tipo:</strong>
+                    {{ reserva.habitacion.tipo }}
+                </p>
+
+                <p class="mb-0">
+                    <strong>Reserva:</strong>
+                    #{{ reserva.id }}
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>Ingreso</th>
+                        <th>Salida</th>
+                        <th>Noches</th>
+                        <th>Precio por noche</th>
+                        <th>Total</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>
+                            {{ reserva.fecha_ingreso.strftime("%d/%m/%Y") }}
+                        </td>
+
+                        <td>
+                            {{ reserva.fecha_salida.strftime("%d/%m/%Y") }}
+                        </td>
+
+                        <td>
+                            {{ noches }}
+                        </td>
+
+                        <td>
+                            Q{{ "%.2f"|format(precio_noche) }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                Q{{ "%.2f"|format(total) }}
+                            </strong>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+
+            <div class="total-factura">
+
+                <span>
+                    Total a pagar
+                </span>
+
+                <strong>
+                    Q{{ "%.2f"|format(total) }}
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="text-center mt-5 text-muted">
+
+            <p class="mb-0">
+                Gracias por hospedarse en Hotel El Descanso.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}  

@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            Bitácora del sistema
+        </h2>
+
+        <p class="text-muted mb-0">
+            Historial de acciones realizadas por los usuarios.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('dashboard.inicio') }}"
+        class="btn btn-outline-secondary"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Regresar
+    </a>
+
+</div>
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <form
+            method="GET"
+            action="{{ url_for('bitacora.listar_bitacora') }}"
+            class="row g-3"
+        >
+
+            <div class="col-md-4">
+
+                <label
+                    for="buscar"
+                    class="form-label"
+                >
+                    Buscar
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    id="buscar"
+                    name="buscar"
+                    value="{{ busqueda }}"
+                    placeholder="Acción, descripción o usuario"
+                >
+
+            </div>
+
+            <div class="col-md-3">
+
+                <label
+                    for="usuario_id"
+                    class="form-label"
+                >
+                    Usuario
+                </label>
+
+                <select
+                    class="form-select"
+                    id="usuario_id"
+                    name="usuario_id"
+                >
+
+                    <option value="">
+                        Todos
+                    </option>
+
+                    {% for usuario in usuarios %}
+
+                        <option
+                            value="{{ usuario.id }}"
+                            {% if usuario_seleccionado == usuario.id|string %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ usuario.nombre }} — {{ usuario.usuario }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <label
+                    for="fecha"
+                    class="form-label"
+                >
+                    Fecha
+                </label>
+
+                <input
+                    type="date"
+                    class="form-control"
+                    id="fecha"
+                    name="fecha"
+                    value="{{ fecha_seleccionada }}"
+                >
+
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-search"></i>
+                        Buscar
+                    </button>
+
+                    <a
+                        href="{{ url_for('bitacora.listar_bitacora') }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Limpiar
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover align-middle mb-0">
+
+                <thead class="table-dark">
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha y hora</th>
+                        <th>Usuario</th>
+                        <th>Rol</th>
+                        <th>Acción</th>
+                        <th>Descripción</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for registro in registros %}
+
+                        <tr>
+
+                            <td>
+                                {{ registro.id }}
+                            </td>
+
+                            <td>
+                                {{ registro.fecha_hora.strftime("%d/%m/%Y %H:%M:%S") }}
+                            </td>
+
+                            <td>
+
+                                {% if registro.usuario_registro %}
+
+                                    {{ registro.usuario_registro.nombre }}
+
+                                    <small class="d-block text-muted">
+                                        {{ registro.usuario_registro.usuario }}
+                                    </small>
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        Sistema
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if registro.usuario_registro %}
+
+                                    {% if registro.usuario_registro.rol == "Administrador" %}
+
+                                        <span class="badge bg-primary">
+                                            Administrador
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-success">
+                                            Recepcionista
+                                        </span>
+
+                                    {% endif %}
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        Sistema
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                <span class="badge bg-dark">
+                                    {{ registro.accion }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ registro.descripcion }}
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="text-center py-4"
+                            >
+                                No se encontraron registros en la bitácora.
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

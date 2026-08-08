@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2 class="mb-1">
+            Administración de Usuarios
+        </h2>
+
+        <p class="text-muted mb-0">
+            Gestión de usuarios del sistema.
+        </p>
+
+    </div>
+
+    <a
+        href="{{ url_for('usuarios.agregar_usuario') }}"
+        class="btn btn-primary"
+    >
+        <i class="bi bi-person-plus-fill"></i>
+        Nuevo Usuario
+    </a>
+
+</div>
+
+{% with mensajes = get_flashed_messages(with_categories=true) %}
+
+    {% if mensajes %}
+
+        {% for categoria, mensaje in mensajes %}
+
+            <div class="alert alert-{{ categoria }}">
+                {{ mensaje }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endwith %}
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table
+                class="table table-hover align-middle mb-0"
+            >
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th>ID</th>
+
+                        <th>Nombre</th>
+
+                        <th>Usuario</th>
+
+                        <th>Rol</th>
+
+                        <th>Estado</th>
+
+                        <th class="text-center">
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for usuario in usuarios %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ usuario.id }}
+
+                        </td>
+
+                        <td>
+
+                            {{ usuario.nombre }}
+
+                        </td>
+
+                        <td>
+
+                            {{ usuario.usuario }}
+
+                        </td>
+
+                        <td>
+
+                            {% if usuario.rol == "Administrador" %}
+
+                                <span class="badge bg-primary">
+                                    Administrador
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-success">
+                                    Recepcionista
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if usuario.activo %}
+
+                                <span class="badge bg-success">
+                                    Activo
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger">
+                                    Inactivo
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td class="text-center">
+
+                            <a
+                                href="{{ url_for('usuarios.editar_usuario', id=usuario.id) }}"
+                                class="btn btn-warning btn-sm"
+                            >
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+
+                            {% if usuario.id != session.get("usuario_id") %}
+
+                            <form
+                                action="{{ url_for('usuarios.eliminar_usuario', id=usuario.id) }}"
+                                method="POST"
+                                class="d-inline"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('¿Desea eliminar este usuario?')"
+                                >
+
+                                    <i class="bi bi-trash-fill"></i>
+
+                                </button>
+
+                            </form>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="text-center py-4"
+                        >
+
+                            No existen usuarios registrados.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

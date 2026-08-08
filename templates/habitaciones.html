@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            Administración de Habitaciones
+        </h2>
+
+        <p class="text-muted mb-0">
+            Consulta, busca y administra las habitaciones del hotel.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('habitaciones.agregar_habitacion') }}"
+        class="btn btn-primary"
+    >
+        <i class="bi bi-plus-circle"></i>
+        Nueva habitación
+    </a>
+
+</div>
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <form
+            method="GET"
+            action="{{ url_for('habitaciones.listar_habitaciones') }}"
+            class="row g-3"
+        >
+
+            <div class="col-md-4">
+
+                <label
+                    for="buscar"
+                    class="form-label"
+                >
+                    Buscar
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    id="buscar"
+                    name="buscar"
+                    value="{{ busqueda }}"
+                    placeholder="Número o tipo de habitación"
+                >
+
+            </div>
+
+            <div class="col-md-3">
+
+                <label
+                    for="tipo"
+                    class="form-label"
+                >
+                    Tipo
+                </label>
+
+                <select
+                    class="form-select"
+                    id="tipo"
+                    name="tipo"
+                >
+
+                    <option value="">
+                        Todos
+                    </option>
+
+                    <option
+                        value="Económica"
+                        {% if tipo_seleccionado == "Económica" %}
+                            selected
+                        {% endif %}
+                    >
+                        Económica
+                    </option>
+
+                    <option
+                        value="Estándar"
+                        {% if tipo_seleccionado == "Estándar" %}
+                            selected
+                        {% endif %}
+                    >
+                        Estándar
+                    </option>
+
+                    <option
+                        value="Ejecutiva"
+                        {% if tipo_seleccionado == "Ejecutiva" %}
+                            selected
+                        {% endif %}
+                    >
+                        Ejecutiva
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <label
+                    for="estado"
+                    class="form-label"
+                >
+                    Estado
+                </label>
+
+                <select
+                    class="form-select"
+                    id="estado"
+                    name="estado"
+                >
+
+                    <option value="">
+                        Todos
+                    </option>
+
+                    <option
+                        value="Disponible"
+                        {% if estado_seleccionado == "Disponible" %}
+                            selected
+                        {% endif %}
+                    >
+                        Disponible
+                    </option>
+
+                    <option
+                        value="Ocupada"
+                        {% if estado_seleccionado == "Ocupada" %}
+                            selected
+                        {% endif %}
+                    >
+                        Ocupada
+                    </option>
+
+                    <option
+                        value="Mantenimiento"
+                        {% if estado_seleccionado == "Mantenimiento" %}
+                            selected
+                        {% endif %}
+                    >
+                        Mantenimiento
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-search"></i>
+                        Buscar
+                    </button>
+
+                    <a
+                        href="{{ url_for('habitaciones.listar_habitaciones') }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Limpiar
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover align-middle mb-0">
+
+                <thead class="table-dark">
+
+                    <tr>
+                        <th>Número</th>
+                        <th>Tipo</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+
+                        <th class="text-center">
+                            Acciones
+                        </th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for habitacion in habitaciones %}
+
+                        <tr>
+
+                            <td>
+                                {{ habitacion.numero }}
+                            </td>
+
+                            <td>
+                                {{ habitacion.tipo }}
+                            </td>
+
+                            <td>
+                                Q{{ "%.2f"|format(habitacion.precio) }}
+                            </td>
+
+                            <td>
+
+                                {% if habitacion.estado == "Disponible" %}
+
+                                    <span class="badge bg-success">
+                                        Disponible
+                                    </span>
+
+                                {% elif habitacion.estado == "Ocupada" %}
+
+                                    <span class="badge bg-danger">
+                                        Ocupada
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Mantenimiento
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td class="text-center">
+
+                                <a
+                                    href="{{ url_for(
+                                        'habitaciones.editar_habitacion',
+                                        id=habitacion.id
+                                    ) }}"
+                                    class="btn btn-warning btn-sm"
+                                >
+                                    <i class="bi bi-pencil-square"></i>
+                                    Editar
+                                </a>
+
+                                <form
+                                    action="{{ url_for(
+                                        'habitaciones.eliminar_habitacion',
+                                        id=habitacion.id
+                                    ) }}"
+                                    method="POST"
+                                    class="d-inline"
+                                    onsubmit="return confirm(
+                                        '¿Deseas eliminar esta habitación?'
+                                    );"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger btn-sm"
+                                    >
+                                        <i class="bi bi-trash"></i>
+                                        Eliminar
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                class="text-center py-4"
+                            >
+                                No se encontraron habitaciones.
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">Editar Habitación</h2>
+
+        <p class="text-muted mb-0">
+            Modifique la información de la habitación.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('habitaciones.listar_habitaciones') }}"
+        class="btn btn-secondary"
+    >
+        Regresar
+    </a>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <form method="POST">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Número de habitación
+                </label>
+
+                <input
+                    type="number"
+                    class="form-control"
+                    name="numero"
+                    value="{{ habitacion.numero }}"
+                    required
+                >
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Tipo
+                </label>
+
+                <select
+                    class="form-select"
+                    name="tipo"
+                    required
+                >
+
+                    <option
+                        value="Económica"
+                        {% if habitacion.tipo == "Económica" %}selected{% endif %}
+                    >
+                        Económica
+                    </option>
+
+                    <option
+                        value="Estándar"
+                        {% if habitacion.tipo == "Estándar" %}selected{% endif %}
+                    >
+                        Estándar
+                    </option>
+
+                    <option
+                        value="Ejecutiva"
+                        {% if habitacion.tipo == "Ejecutiva" %}selected{% endif %}
+                    >
+                        Ejecutiva
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Estado
+                </label>
+
+                <select
+                    class="form-select"
+                    name="estado"
+                    required
+                >
+
+                    <option
+                        value="Disponible"
+                        {% if habitacion.estado == "Disponible" %}selected{% endif %}
+                    >
+                        Disponible
+                    </option>
+
+                    <option
+                        value="Ocupada"
+                        {% if habitacion.estado == "Ocupada" %}selected{% endif %}
+                    >
+                        Ocupada
+                    </option>
+
+                    <option
+                        value="Mantenimiento"
+                        {% if habitacion.estado == "Mantenimiento" %}selected{% endif %}
+                    >
+                        Mantenimiento
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-success"
+            >
+                Guardar Cambios
+            </button>
+
+            <a
+                href="{{ url_for('habitaciones.listar_habitaciones') }}"
+                class="btn btn-secondary"
+            >
+                Cancelar
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">Nueva Habitación</h2>
+
+        <p class="text-muted mb-0">
+            Complete el formulario para registrar una habitación.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('habitaciones.listar_habitaciones') }}"
+        class="btn btn-secondary"
+    >
+        Regresar
+    </a>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <form
+            method="POST"
+            action="{{ url_for('habitaciones.agregar_habitacion') }}"
+        >
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Número de habitación
+                </label>
+
+                <input
+                    type="number"
+                    class="form-control"
+                    name="numero"
+                    min="1"
+                    required
+                >
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Tipo
+                </label>
+
+                <select
+                    class="form-select"
+                    name="tipo"
+                    required
+                >
+
+                    <option value="">
+                        Seleccione...
+                    </option>
+
+                    <option value="Económica">
+                        Económica
+                    </option>
+
+                    <option value="Estándar">
+                        Estándar
+                    </option>
+
+                    <option value="Ejecutiva">
+                        Ejecutiva
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Estado
+                </label>
+
+                <select
+                    class="form-select"
+                    name="estado"
+                    required
+                >
+
+                    <option value="Disponible">
+                        Disponible
+                    </option>
+
+                    <option value="Ocupada">
+                        Ocupada
+                    </option>
+
+                    <option value="Mantenimiento">
+                        Mantenimiento
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-success"
+            >
+                Guardar Habitación
+            </button>
+
+            <a
+                href="{{ url_for('habitaciones.listar_habitaciones') }}"
+                class="btn btn-secondary"
+            >
+                Cancelar
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

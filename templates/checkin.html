@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">Check-In</h2>
+
+        <p class="text-muted mb-0">
+            Asigna una habitación disponible a un huésped registrado.
+        </p>
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        {% if not huespedes %}
+
+            <div class="alert alert-warning">
+                No hay huéspedes registrados.
+
+                <a
+                    href="{{ url_for('huespedes.agregar_huesped') }}"
+                    class="alert-link"
+                >
+                    Registrar un huésped
+                </a>
+            </div>
+
+        {% elif not habitaciones %}
+
+            <div class="alert alert-warning">
+                No hay habitaciones disponibles.
+            </div>
+
+        {% else %}
+
+            <form
+                method="POST"
+                action="{{ url_for('reservas.checkin') }}"
+            >
+
+                <div class="mb-3">
+                    <label
+                        for="huesped_id"
+                        class="form-label"
+                    >
+                        Huésped
+                    </label>
+
+                    <select
+                        class="form-select"
+                        id="huesped_id"
+                        name="huesped_id"
+                        required
+                    >
+                        <option value="">
+                            Seleccione un huésped
+                        </option>
+
+                        {% for huesped in huespedes %}
+
+                            <option value="{{ huesped.id }}">
+                                {{ huesped.nombre }} — DPI {{ huesped.dpi }}
+                            </option>
+
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label
+                        for="habitacion_id"
+                        class="form-label"
+                    >
+                        Habitación disponible
+                    </label>
+
+                    <select
+                        class="form-select"
+                        id="habitacion_id"
+                        name="habitacion_id"
+                        required
+                    >
+                        <option value="">
+                            Seleccione una habitación
+                        </option>
+
+                        {% for habitacion in habitaciones %}
+
+                            <option value="{{ habitacion.id }}">
+                                Habitación {{ habitacion.numero }}
+                                — {{ habitacion.tipo }}
+                                — Q{{ "%.2f"|format(habitacion.precio) }}
+                            </option>
+
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label
+                        for="fecha_ingreso"
+                        class="form-label"
+                    >
+                        Fecha de ingreso
+                    </label>
+
+                    <input
+                        type="date"
+                        class="form-control"
+                        id="fecha_ingreso"
+                        name="fecha_ingreso"
+                        value="{{ fecha_actual }}"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-success"
+                >
+                    Realizar Check-In
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

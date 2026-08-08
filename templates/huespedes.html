@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="mb-1">
+            Administración de Huéspedes
+        </h2>
+
+        <p class="text-muted mb-0">
+            Consulta, busca y administra los huéspedes registrados.
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('huespedes.agregar_huesped') }}"
+        class="btn btn-primary"
+    >
+        <i class="bi bi-person-plus"></i>
+        Nuevo huésped
+    </a>
+
+</div>
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <form
+            method="GET"
+            action="{{ url_for('huespedes.listar_huespedes') }}"
+            class="row g-3"
+        >
+
+            <div class="col-md-9">
+
+                <label
+                    for="buscar"
+                    class="form-label"
+                >
+                    Buscar huésped
+                </label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    id="buscar"
+                    name="buscar"
+                    value="{{ busqueda }}"
+                    placeholder="Nombre, DPI o teléfono"
+                >
+
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end">
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-search"></i>
+                        Buscar
+                    </button>
+
+                    <a
+                        href="{{ url_for('huespedes.listar_huespedes') }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Limpiar
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover align-middle mb-0">
+
+                <thead class="table-dark">
+
+                    <tr>
+                        <th>Nombre</th>
+                        <th>DPI</th>
+                        <th>Teléfono</th>
+
+                        <th class="text-center">
+                            Acciones
+                        </th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for huesped in huespedes %}
+
+                        <tr>
+
+                            <td>
+                                {{ huesped.nombre }}
+                            </td>
+
+                            <td>
+                                {{ huesped.dpi }}
+                            </td>
+
+                            <td>
+                                {{ huesped.telefono }}
+                            </td>
+
+                            <td class="text-center">
+
+                                <a
+                                    href="{{ url_for(
+                                        'huespedes.editar_huesped',
+                                        id=huesped.id
+                                    ) }}"
+                                    class="btn btn-warning btn-sm"
+                                >
+                                    <i class="bi bi-pencil-square"></i>
+                                    Editar
+                                </a>
+
+                                <form
+                                    action="{{ url_for(
+                                        'huespedes.eliminar_huesped',
+                                        id=huesped.id
+                                    ) }}"
+                                    method="POST"
+                                    class="d-inline"
+                                    onsubmit="return confirm(
+                                        '¿Deseas eliminar este huésped?'
+                                    );"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="btn btn-danger btn-sm"
+                                    >
+                                        <i class="bi bi-trash"></i>
+                                        Eliminar
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="text-center py-4"
+                            >
+                                No se encontraron huéspedes.
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

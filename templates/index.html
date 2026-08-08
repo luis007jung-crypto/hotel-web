@@ -1,0 +1,572 @@
+{% extends "base.html" %}
+
+{% block contenido %}
+
+<div class="mb-4">
+    <h2 class="mb-1">Dashboard</h2>
+
+    <p class="text-muted mb-0">
+        Resumen general de la operación del hotel.
+    </p>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card card-estadistica shadow-sm h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+
+                <div>
+                    <p class="text-muted mb-1">
+                        Total de habitaciones
+                    </p>
+
+                    <h2 class="mb-0">
+                        {{ total }}
+                    </h2>
+                </div>
+
+                <div class="icono-estadistica icono-azul">
+                    <i class="bi bi-door-open-fill"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card card-estadistica shadow-sm h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+
+                <div>
+                    <p class="text-muted mb-1">
+                        Disponibles
+                    </p>
+
+                    <h2 class="mb-0 text-success">
+                        {{ disponibles }}
+                    </h2>
+                </div>
+
+                <div class="icono-estadistica icono-verde">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card card-estadistica shadow-sm h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+
+                <div>
+                    <p class="text-muted mb-1">
+                        Ocupadas
+                    </p>
+
+                    <h2 class="mb-0 text-danger">
+                        {{ ocupadas }}
+                    </h2>
+                </div>
+
+                <div class="icono-estadistica icono-rojo">
+                    <i class="bi bi-person-fill-lock"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="card card-estadistica shadow-sm h-100">
+            <div class="card-body d-flex align-items-center justify-content-between">
+
+                <div>
+                    <p class="text-muted mb-1">
+                        Huéspedes registrados
+                    </p>
+
+                    <h2 class="mb-0">
+                        {{ total_huespedes }}
+                    </h2>
+                </div>
+
+                <div class="icono-estadistica icono-morado">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4 mt-1">
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+
+                <h4 class="mb-1">
+                    Estado de habitaciones
+                </h4>
+
+                <p class="text-muted">
+                    Distribución actual por estado.
+                </p>
+
+                <div class="contenedor-grafica">
+                    <canvas id="graficaEstados"></canvas>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+
+                <h4 class="mb-1">
+                    Habitaciones por tipo
+                </h4>
+
+                <p class="text-muted">
+                    Distribución por categoría.
+                </p>
+
+                <div class="contenedor-grafica">
+                    <canvas id="graficaTipos"></canvas>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4 mt-4">
+
+    <div class="col-lg-12">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h4>
+                    Ingresos por mes ({{ anio_actual }})
+                </h4>
+
+                <canvas
+                    id="graficaIngresos"
+                    height="100"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="row g-4 mt-2">
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h4>
+                    Habitaciones más utilizadas
+                </h4>
+
+                <canvas
+                    id="graficaHabitaciones"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm">
+
+            <div class="card-body">
+
+                <h4>
+                    Tipos más reservados
+                </h4>
+
+                <canvas
+                    id="graficaReservasTipo"
+                ></canvas>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+                <h4 class="mb-3">
+                    Reservas
+                </h4>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Activas</span>
+
+                    <span class="badge bg-success">
+                        {{ reservas_activas }}
+                    </span>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Finalizadas</span>
+
+                    <span class="badge bg-secondary">
+                        {{ reservas_finalizadas }}
+                    </span>
+                </div>
+
+                <hr>
+
+                <div class="d-grid gap-2">
+                    <a
+                        href="{{ url_for('reservas.checkin') }}"
+                        class="btn btn-success"
+                    >
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Realizar Check-In
+                    </a>
+
+                    <a
+                        href="{{ url_for('reservas.checkout') }}"
+                        class="btn btn-outline-danger"
+                    >
+                        <i class="bi bi-box-arrow-right"></i>
+                        Realizar Check-Out
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+
+                <h4 class="mb-3">
+                    Últimas reservas
+                </h4>
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped align-middle mb-0">
+
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Huésped</th>
+                                <th>Habitación</th>
+                                <th>Ingreso</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for reserva in ultimas_reservas %}
+
+                                <tr>
+                                    <td>
+                                        {{ reserva.huesped.nombre }}
+                                    </td>
+
+                                    <td>
+                                        Habitación {{ reserva.habitacion.numero }}
+                                    </td>
+
+                                    <td>
+                                        {{ reserva.fecha_ingreso.strftime("%d/%m/%Y") }}
+                                    </td>
+
+                                    <td>
+                                        {% if reserva.estado == "Activa" %}
+
+                                            <span class="badge bg-success">
+                                                Activa
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-secondary">
+                                                Finalizada
+                                            </span>
+
+                                        {% endif %}
+                                    </td>
+                                </tr>
+
+                            {% else %}
+
+                                <tr>
+                                    <td
+                                        colspan="4"
+                                        class="text-center py-4"
+                                    >
+                                        No existen reservas registradas.
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div
+    
+    id="datosDashboard"
+
+    data-disponibles="{{ disponibles }}"
+    data-ocupadas="{{ ocupadas }}"
+    data-mantenimiento="{{ mantenimiento }}"
+
+    data-economicas="{{ economicas }}"
+    data-estandar="{{ estandar }}"
+    data-ejecutivas="{{ ejecutivas }}"
+
+    data-meses='{{ nombres_meses|tojson }}'
+    data-ingresos='{{ ingresos_mensuales|tojson }}'
+
+    data-habitaciones='{{ etiquetas_habitaciones|tojson }}'
+    data-uso='{{ valores_habitaciones|tojson }}'
+
+    data-tipos='{{ etiquetas_tipos_reservados|tojson }}'
+    data-cantidad='{{ valores_tipos_reservados|tojson }}'
+
+    hidden
+></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const datosElemento = document.getElementById("datosDashboard");
+        const graficaEstados = document.getElementById("graficaEstados");
+        const graficaTipos = document.getElementById("graficaTipos");
+        const graficaIngresos = document.getElementById(
+    "graficaIngresos"
+);
+
+const graficaHabitaciones = document.getElementById(
+    "graficaHabitaciones"
+);
+
+const graficaReservasTipo = document.getElementById(
+    "graficaReservasTipo"
+);
+
+        if (
+    !datosElemento ||
+    !graficaEstados ||
+    !graficaTipos ||
+    !graficaIngresos ||
+    !graficaHabitaciones ||
+    !graficaReservasTipo
+) {
+    return;
+}
+
+        const disponibles = Number(
+            datosElemento.dataset.disponibles
+        );
+
+        const ocupadas = Number(
+            datosElemento.dataset.ocupadas
+        );
+
+        const mantenimiento = Number(
+            datosElemento.dataset.mantenimiento
+        );
+
+        const economicas = Number(
+            datosElemento.dataset.economicas
+        );
+
+        const estandar = Number(
+            datosElemento.dataset.estandar
+        );
+
+        const ejecutivas = Number(
+            datosElemento.dataset.ejecutivas
+        );
+
+        const meses =
+    JSON.parse(datosElemento.dataset.meses);
+
+const ingresos =
+    JSON.parse(datosElemento.dataset.ingresos);
+
+const habitaciones =
+    JSON.parse(datosElemento.dataset.habitaciones);
+
+const uso =
+    JSON.parse(datosElemento.dataset.uso);
+
+const tipos =
+    JSON.parse(datosElemento.dataset.tipos);
+
+const cantidad =
+    JSON.parse(datosElemento.dataset.cantidad);
+
+        new Chart(graficaEstados, {
+            type: "doughnut",
+
+            data: {
+                labels: [
+                    "Disponibles",
+                    "Ocupadas",
+                    "Mantenimiento"
+                ],
+
+                datasets: [
+                    {
+                        data: [
+                            disponibles,
+                            ocupadas,
+                            mantenimiento
+                        ],
+
+                        backgroundColor: [
+                            "#16a34a",
+                            "#dc2626",
+                            "#d97706"
+                        ],
+
+                        borderWidth: 0
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    }
+                }
+            }
+        });
+
+        new Chart(graficaTipos, {
+            type: "bar",
+
+            data: {
+                labels: [
+                    "Económicas",
+                    "Estándar",
+                    "Ejecutivas"
+                ],
+
+                datasets: [
+                    {
+                        label: "Habitaciones",
+
+                        data: [
+                            economicas,
+                            estandar,
+                            ejecutivas
+                        ],
+
+                        backgroundColor: [
+                            "#2563eb",
+                            "#7c3aed",
+                            "#0891b2"
+                        ],
+
+                        borderRadius: 8
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        new Chart(graficaIngresos, {
+    type: "line",
+    data: {
+        labels: meses,
+        datasets: [{
+            label: "Ingresos",
+            data: ingresos,
+            borderColor: "#198754",
+            backgroundColor: "#19875433",
+            fill: true,
+            tension: 0.3
+        }]
+    }
+});
+
+new Chart(graficaHabitaciones, {
+    type: "bar",
+    data: {
+        labels: habitaciones,
+        datasets: [{
+            label: "Reservas",
+            data: uso
+        }]
+    }
+});
+
+new Chart(graficaReservasTipo, {
+    type: "pie",
+    data: {
+        labels: tipos,
+        datasets: [{
+            data: cantidad
+        }]
+    }
+});
+    });
+</script>
+
+
+{% endblock %}
