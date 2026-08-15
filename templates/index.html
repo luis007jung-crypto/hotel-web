@@ -248,122 +248,43 @@
                         Realizar Check-In
                     </a>
 
-                    <a
+                                       <a
                         href="{{ url_for('reservas.checkout') }}"
                         class="btn btn-outline-danger"
                     >
                         <i class="bi bi-box-arrow-right"></i>
                         Realizar Check-Out
                     </a>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-8">
-        <div class="card shadow-sm h-100">
-            <div class="card-body">
-
-                <h4 class="mb-3">
-                    Últimas reservas
-                </h4>
-
-                <div class="table-responsive">
-
-                    <table class="table table-striped align-middle mb-0">
-
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Huésped</th>
-                                <th>Habitación</th>
-                                <th>Ingreso</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            {% for reserva in ultimas_reservas %}
-
-                                <tr>
-                                    <td>
-                                        {{ reserva.huesped.nombre }}
-                                    </td>
-
-                                    <td>
-                                        Habitación {{ reserva.habitacion.numero }}
-                                    </td>
-
-                                    <td>
-                                        {{ reserva.fecha_ingreso.strftime("%d/%m/%Y") }}
-                                    </td>
-
-                                    <td>
-                                        {% if reserva.estado == "Activa" %}
-
-                                            <span class="badge bg-success">
-                                                Activa
-                                            </span>
-
-                                        {% else %}
-
-                                            <span class="badge bg-secondary">
-                                                Finalizada
-                                            </span>
-
-                                        {% endif %}
-                                    </td>
-                                </tr>
-
-                            {% else %}
-
-                                <tr>
-                                    <td
-                                        colspan="4"
-                                        class="text-center py-4"
-                                    >
-                                        No existen reservas registradas.
-                                    </td>
-                                </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
 
                 </div>
 
             </div>
+
         </div>
+
     </div>
 
 </div>
 
-<div
-    
-    id="datosDashboard"
 
+<div
+    id="datosDashboard"
     data-disponibles="{{ disponibles }}"
     data-ocupadas="{{ ocupadas }}"
     data-mantenimiento="{{ mantenimiento }}"
-
     data-economicas="{{ economicas }}"
     data-estandar="{{ estandar }}"
     data-ejecutivas="{{ ejecutivas }}"
-
     data-meses='{{ nombres_meses|tojson }}'
     data-ingresos='{{ ingresos_mensuales|tojson }}'
-
     data-habitaciones='{{ etiquetas_habitaciones|tojson }}'
     data-uso='{{ valores_habitaciones|tojson }}'
-
     data-tipos='{{ etiquetas_tipos_reservados|tojson }}'
     data-cantidad='{{ valores_tipos_reservados|tojson }}'
-
     hidden
+    style="display: none;"
 ></div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
