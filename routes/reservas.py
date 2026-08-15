@@ -61,12 +61,7 @@ def checkin():
             ""
         ).strip()
 
-        fecha_ingreso = request.form.get(
-            "fecha_ingreso",
-            ""
-        ).strip()
-
-        if not huesped_id or not habitacion_id or not fecha_ingreso:
+        if not huesped_id or not habitacion_id:
             flash(
                 "Todos los campos son obligatorios.",
                 "danger"
@@ -83,9 +78,7 @@ def checkin():
             huesped_id = int(huesped_id)
             habitacion_id = int(habitacion_id)
 
-            fecha_ingreso_convertida = date.fromisoformat(
-                fecha_ingreso
-            )
+            fecha_ingreso_convertida = date.today()
 
         except ValueError:
             flash(
@@ -240,35 +233,7 @@ def realizar_checkout(id):
             url_for("reservas.checkout")
         )
 
-    fecha_salida = request.form.get(
-        "fecha_salida",
-        ""
-    ).strip()
-
-    if not fecha_salida:
-        flash(
-            "Debe indicar la fecha de salida.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("reservas.checkout")
-        )
-
-    try:
-        fecha_salida_convertida = date.fromisoformat(
-            fecha_salida
-        )
-
-    except ValueError:
-        flash(
-            "La fecha de salida no es válida.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("reservas.checkout")
-        )
+    fecha_salida_convertida = date.today()
 
     if fecha_salida_convertida < reserva.fecha_ingreso:
         flash(
