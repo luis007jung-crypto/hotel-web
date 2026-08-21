@@ -5,14 +5,23 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
 
     <div>
-        <h2 class="mb-1">Check-In</h2>
+
+        <h2 class="mb-1">
+            Reservaciones y Check-In
+        </h2>
 
         <p class="text-muted mb-0">
-            Asigna una habitación disponible a un huésped registrado.
+            Crea una reservación futura o realiza un Check-In.
         </p>
+
     </div>
 
 </div>
+
+
+<!-- ============================================= -->
+<!-- FORMULARIO -->
+<!-- ============================================= -->
 
 <div class="card shadow-sm">
 
@@ -21,6 +30,7 @@
         {% if not huespedes %}
 
             <div class="alert alert-warning">
+
                 No hay huéspedes registrados.
 
                 <a
@@ -29,12 +39,15 @@
                 >
                     Registrar un huésped
                 </a>
+
             </div>
 
         {% elif not habitaciones %}
 
             <div class="alert alert-warning">
+
                 No hay habitaciones disponibles.
+
             </div>
 
         {% else %}
@@ -44,7 +57,10 @@
                 action="{{ url_for('reservas.checkin') }}"
             >
 
+                <!-- HUÉSPED -->
+
                 <div class="mb-3">
+
                     <label
                         for="huesped_id"
                         class="form-label"
@@ -58,6 +74,7 @@
                         name="huesped_id"
                         required
                     >
+
                         <option value="">
                             Seleccione un huésped
                         </option>
@@ -65,19 +82,28 @@
                         {% for huesped in huespedes %}
 
                             <option value="{{ huesped.id }}">
-                                {{ huesped.nombre }} — DPI {{ huesped.dpi }}
+
+                                {{ huesped.nombre }}
+                                — DPI {{ huesped.dpi }}
+
                             </option>
 
                         {% endfor %}
+
                     </select>
+
                 </div>
 
+
+                <!-- HABITACIÓN -->
+
                 <div class="mb-3">
+
                     <label
                         for="habitacion_id"
                         class="form-label"
                     >
-                        Habitación disponible
+                        Habitación
                     </label>
 
                     <select
@@ -86,6 +112,7 @@
                         name="habitacion_id"
                         required
                     >
+
                         <option value="">
                             Seleccione una habitación
                         </option>
@@ -93,16 +120,26 @@
                         {% for habitacion in habitaciones %}
 
                             <option value="{{ habitacion.id }}">
+
                                 Habitación {{ habitacion.numero }}
-                                — {{ habitacion.tipo }}
-                                — Q{{ "%.2f"|format(habitacion.precio) }}
+                                —
+                                {{ habitacion.tipo }}
+                                —
+                                Q{{ "%.2f"|format(habitacion.precio) }}
+
                             </option>
 
                         {% endfor %}
+
                     </select>
+
                 </div>
 
+
+                <!-- FECHA DE INGRESO -->
+
                 <div class="mb-3">
+
                     <label
                         for="fecha_ingreso"
                         class="form-label"
@@ -113,19 +150,221 @@
                     <input
                         type="date"
                         class="form-control"
+                        id="fecha_ingreso"
+                        name="fecha_ingreso"
                         value="{{ fecha_actual }}"
-                        readonly
+                        min="{{ fecha_actual }}"
+                        required
                     >
+
+                    <div class="form-text">
+
+                        Si eliges la fecha de hoy,
+                        se realizará un Check-In.
+
+                        Si eliges una fecha futura,
+                        se creará una reservación.
+
+                    </div>
+
                 </div>
+
+
+                <!-- FECHA DE SALIDA -->
+
+                <div class="mb-3">
+
+                    <label
+                        for="fecha_salida"
+                        class="form-label"
+                    >
+                        Fecha de salida
+                    </label>
+
+                    <input
+                        type="date"
+                        class="form-control"
+                        id="fecha_salida"
+                        name="fecha_salida"
+                        min="{{ fecha_actual }}"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- BOTÓN -->
 
                 <button
                     type="submit"
                     class="btn btn-success"
                 >
-                    Realizar Check-In
+
+                    <i class="bi bi-calendar-check"></i>
+
+                    Registrar reservación / Check-In
+
                 </button>
 
             </form>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- ============================================= -->
+<!-- RESERVACIONES FUTURAS -->
+<!-- ============================================= -->
+
+<div class="card shadow-sm mt-4">
+
+    <div class="card-body">
+
+        <h4 class="mb-3">
+            Reservaciones pendientes
+        </h4>
+
+        {% if reservas_pendientes %}
+
+            <div class="table-responsive">
+
+                <table
+                    class="table table-striped table-hover align-middle"
+                >
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>
+                                Huésped
+                            </th>
+
+                            <th>
+                                Habitación
+                            </th>
+
+                            <th>
+                                Ingreso
+                            </th>
+
+                            <th>
+                                Salida
+                            </th>
+
+                            <th>
+                                Estado
+                            </th>
+
+                            <th>
+                                Acción
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for reserva in reservas_pendientes %}
+
+                            <tr>
+
+                                <td>
+                                    {{ reserva.huesped.nombre }}
+                                </td>
+
+                                <td>
+                                    Habitación
+                                    {{ reserva.habitacion.numero }}
+                                </td>
+
+                                <td>
+                                    {{
+                                        reserva.fecha_ingreso.strftime(
+                                            "%d/%m/%Y"
+                                        )
+                                    }}
+                                </td>
+
+                                <td>
+                                    {{
+                                        reserva.fecha_salida.strftime(
+                                            "%d/%m/%Y"
+                                        )
+                                    }}
+                                </td>
+
+                                <td>
+
+                                    <span
+                                        class="badge bg-warning text-dark"
+                                    >
+                                        Reservada
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    {% if reserva.fecha_ingreso <= hoy %}
+
+                                        <form
+                                            method="POST"
+                                            action="{{
+                                                url_for(
+                                                    'reservas.realizar_checkin_reserva',
+                                                    id=reserva.id
+                                                )
+                                            }}"
+                                            onsubmit="return confirm(
+                                                '¿Deseas realizar el Check-In de esta reservación?'
+                                            );"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-success btn-sm"
+                                            >
+
+                                                <i class="bi bi-box-arrow-in-right"></i>
+
+                                                Realizar Check-In
+
+                                            </button>
+
+                                        </form>
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            Pendiente
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-info mb-0">
+
+                No existen reservaciones pendientes.
+
+            </div>
 
         {% endif %}
 
