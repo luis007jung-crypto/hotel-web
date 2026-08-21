@@ -8,6 +8,8 @@ from flask import (
     session
 )
 
+from difflib import SequenceMatcher
+
 from models import db, Huesped, Bitacora
 
 
@@ -17,6 +19,9 @@ huespedes_bp = Blueprint(
 )
 
 
+# =========================================================
+# FUNCIÓN PARA REGISTRAR ACCIONES EN LA BITÁCORA
+# =========================================================
 def registrar_bitacora(accion, descripcion):
     registro = Bitacora(
         accion=accion,
@@ -27,8 +32,12 @@ def registrar_bitacora(accion, descripcion):
     db.session.add(registro)
 
 
+# =========================================================
+# LISTAR HUÉSPEDES
+# =========================================================
 @huespedes_bp.route("/huespedes")
 def listar_huespedes():
+
     busqueda = request.args.get(
         "buscar",
         ""
@@ -36,6 +45,7 @@ def listar_huespedes():
 
     consulta = Huesped.query
 
+    # Buscar por nombre, DPI o teléfono
     if busqueda:
         consulta = consulta.filter(
             db.or_(
@@ -62,12 +72,18 @@ def listar_huespedes():
     )
 
 
+# =========================================================
+# AGREGAR HUÉSPED
+# =========================================================
 @huespedes_bp.route(
     "/huespedes/agregar",
     methods=["GET", "POST"]
 )
 def agregar_huesped():
+
     if request.method == "POST":
+
+        # Obtener información del formulario
         nombre = request.form.get(
             "nombre",
             ""
@@ -83,7 +99,12 @@ def agregar_huesped():
             ""
         ).strip()
 
+
+        # -------------------------------------------------
+        # VALIDAR CAMPOS VACÍOS
+        # -------------------------------------------------
         if not nombre or not dpi or not telefono:
+
             flash(
                 "Todos los campos son obligatorios.",
                 "danger"
@@ -93,7 +114,12 @@ def agregar_huesped():
                 "agregar_huesped.html"
             )
 
+
+        # -------------------------------------------------
+        # VALIDAR DPI
+        # -------------------------------------------------
         if not dpi.isdigit() or len(dpi) != 13:
+
             flash(
                 "El DPI debe contener exactamente 13 dígitos.",
                 "danger"
@@ -103,7 +129,12 @@ def agregar_huesped():
                 "agregar_huesped.html"
             )
 
+
+        # -------------------------------------------------
+        # VALIDAR TELÉFONO
+        # -------------------------------------------------
         if not telefono.isdigit() or len(telefono) != 8:
+
             flash(
                 "El teléfono debe contener exactamente 8 dígitos.",
                 "danger"
@@ -113,11 +144,16 @@ def agregar_huesped():
                 "agregar_huesped.html"
             )
 
+
+        # -------------------------------------------------
+        # VERIFICAR DPI REPETIDO
+        # -------------------------------------------------
         huesped_existente = Huesped.query.filter_by(
             dpi=dpi
         ).first()
 
         if huesped_existente:
+
             flash(
                 "Ya existe un huésped registrado con ese DPI.",
                 "danger"
@@ -127,6 +163,39 @@ def agregar_huesped():
                 "agregar_huesped.html"
             )
 
+
+        # -------------------------------------------------
+        # VERIFICAR NOMBRES IGUALES O MUY SIMILARES
+        # -------------------------------------------------
+        huespedes_registrados = Huesped.query.all()
+
+        for huesped in huespedes_registrados:
+
+            similitud = SequenceMatcher(
+                None,
+                huesped.nombre.lower().strip(),
+                nombre.lower().strip()
+            ).ratio()
+
+            # 0.90 significa 90 % de similitud
+            if similitud >= 0.90:
+
+                flash(
+                    (
+                        "Ya existe un huésped con un nombre "
+                        f"igual o muy similar: {huesped.nombre}."
+                    ),
+                    "danger"
+                )
+
+                return render_template(
+                    "agregar_huesped.html"
+                )
+
+
+        # -------------------------------------------------
+        # CREAR NUEVO HUÉSPED
+        # -------------------------------------------------
         nuevo_huesped = Huesped(
             nombre=nombre,
             dpi=dpi,
@@ -134,10 +203,13 @@ def agregar_huesped():
         )
 
         try:
-            db.session.add(nuevo_huesped)
+
+            db.session.add(
+                nuevo_huesped
+            )
 
             registrar_bitacora(
-                accion="Crear huésped",
+                accion="Agregar huésped",
                 descripcion=(
                     f"Se registró al huésped {nombre}, "
                     f"con DPI {dpi}."
@@ -158,6 +230,7 @@ def agregar_huesped():
             )
 
         except Exception:
+
             db.session.rollback()
 
             flash(
@@ -165,19 +238,25 @@ def agregar_huesped():
                 "danger"
             )
 
+
     return render_template(
         "agregar_huesped.html"
     )
 
 
+# =========================================================
+# EDITAR HUÉSPED
+# =========================================================
 @huespedes_bp.route(
     "/huespedes/editar/<int:id>",
     methods=["GET", "POST"]
 )
 def editar_huesped(id):
+
     huesped = Huesped.query.get_or_404(id)
 
     if request.method == "POST":
+
         nombre_anterior = huesped.nombre
         dpi_anterior = huesped.dpi
         telefono_anterior = huesped.telefono
@@ -197,7 +276,12 @@ def editar_huesped(id):
             ""
         ).strip()
 
+
+        # -------------------------------------------------
+        # VALIDAR CAMPOS VACÍOS
+        # -------------------------------------------------
         if not nombre or not dpi or not telefono:
+
             flash(
                 "Todos los campos son obligatorios.",
                 "danger"
@@ -208,7 +292,12 @@ def editar_huesped(id):
                 huesped=huesped
             )
 
+
+        # -------------------------------------------------
+        # VALIDAR DPI
+        # -------------------------------------------------
         if not dpi.isdigit() or len(dpi) != 13:
+
             flash(
                 "El DPI debe contener exactamente 13 dígitos.",
                 "danger"
@@ -219,7 +308,12 @@ def editar_huesped(id):
                 huesped=huesped
             )
 
+
+        # -------------------------------------------------
+        # VALIDAR TELÉFONO
+        # -------------------------------------------------
         if not telefono.isdigit() or len(telefono) != 8:
+
             flash(
                 "El teléfono debe contener exactamente 8 dígitos.",
                 "danger"
@@ -230,12 +324,17 @@ def editar_huesped(id):
                 huesped=huesped
             )
 
+
+        # -------------------------------------------------
+        # VERIFICAR DPI REPETIDO
+        # -------------------------------------------------
         dpi_repetido = Huesped.query.filter(
             Huesped.dpi == dpi,
             Huesped.id != id
         ).first()
 
         if dpi_repetido:
+
             flash(
                 "Ya existe otro huésped con ese DPI.",
                 "danger"
@@ -246,18 +345,57 @@ def editar_huesped(id):
                 huesped=huesped
             )
 
+
+        # -------------------------------------------------
+        # VERIFICAR NOMBRE IGUAL O MUY SIMILAR
+        # -------------------------------------------------
+        otros_huespedes = Huesped.query.filter(
+            Huesped.id != id
+        ).all()
+
+        for otro_huesped in otros_huespedes:
+
+            similitud = SequenceMatcher(
+                None,
+                otro_huesped.nombre.lower().strip(),
+                nombre.lower().strip()
+            ).ratio()
+
+            if similitud >= 0.90:
+
+                flash(
+                    (
+                        "Ya existe otro huésped con un nombre "
+                        f"igual o muy similar: "
+                        f"{otro_huesped.nombre}."
+                    ),
+                    "danger"
+                )
+
+                return render_template(
+                    "editar_huesped.html",
+                    huesped=huesped
+                )
+
+
+        # -------------------------------------------------
+        # ACTUALIZAR INFORMACIÓN
+        # -------------------------------------------------
         huesped.nombre = nombre
         huesped.dpi = dpi
         huesped.telefono = telefono
 
         try:
+
             registrar_bitacora(
                 accion="Editar huésped",
                 descripcion=(
-                    f"Se actualizó al huésped {nombre_anterior}. "
+                    f"Se actualizó al huésped "
+                    f"{nombre_anterior}. "
                     f"Nombre: {nombre_anterior} → {nombre}; "
                     f"DPI: {dpi_anterior} → {dpi}; "
-                    f"teléfono: {telefono_anterior} → {telefono}."
+                    f"teléfono: "
+                    f"{telefono_anterior} → {telefono}."
                 )
             )
 
@@ -275,6 +413,7 @@ def editar_huesped(id):
             )
 
         except Exception:
+
             db.session.rollback()
 
             flash(
@@ -282,22 +421,27 @@ def editar_huesped(id):
                 "danger"
             )
 
+
     return render_template(
         "editar_huesped.html",
         huesped=huesped
     )
 
 
+# =========================================================
+# ELIMINAR HUÉSPED
+# =========================================================
 @huespedes_bp.route(
     "/huespedes/eliminar/<int:id>",
     methods=["POST"]
 )
 def eliminar_huesped(id):
+
     huesped = Huesped.query.get_or_404(id)
 
-    # Conservamos el historial: no se elimina un huésped
-    # que tenga reservas activas o finalizadas.
+    # No permitir eliminar huéspedes con reservas
     if huesped.reservas:
+
         flash(
             (
                 "No se puede eliminar este huésped porque "
@@ -312,11 +456,15 @@ def eliminar_huesped(id):
             )
         )
 
+
     nombre = huesped.nombre
     dpi = huesped.dpi
 
     try:
-        db.session.delete(huesped)
+
+        db.session.delete(
+            huesped
+        )
 
         registrar_bitacora(
             accion="Eliminar huésped",
@@ -334,12 +482,14 @@ def eliminar_huesped(id):
         )
 
     except Exception:
+
         db.session.rollback()
 
         flash(
             "No fue posible eliminar al huésped.",
             "danger"
         )
+
 
     return redirect(
         url_for(
