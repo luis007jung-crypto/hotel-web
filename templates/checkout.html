@@ -24,6 +24,7 @@
 
                 <thead class="table-dark">
                     <tr>
+                        <th>#</th>
                         <th>Huésped</th>
                         <th>Habitación</th>
                         <th>Tipo</th>
@@ -42,6 +43,9 @@
 
                         <tr>
                             <td>
+                                <td>{{ loop.index }}
+
+                                </td>
                                 {{ reserva.huesped.nombre }}
                             </td>
 
@@ -70,7 +74,7 @@
                                     method="POST"
                                     class="d-flex gap-2"
                                     onsubmit="return confirm(
-                                        '¿Deseas realizar el Check-Out?'
+                                        '¿Deseas realizar check-out?'
                                     );"
                                 >
 
@@ -89,7 +93,7 @@
                                         type="submit"
                                         class="btn btn-danger btn-sm"
                                     >
-                                        Realizar Check-Out
+                                        Realizar check-out
                                     </button>
 
                                 </form>
